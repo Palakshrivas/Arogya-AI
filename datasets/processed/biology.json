@@ -1,0 +1,22 @@
+[
+    {
+        "topic": "cell",
+        "answer": "The cell is the basic structural and functional unit of life."
+    },
+    {
+        "topic": "heart",
+        "answer": "The heart is a muscular organ that pumps blood throughout the body."
+    },
+    {
+        "topic": "photosynthesis",
+        "answer": "Photosynthesis is the process by which green plants prepare their own food using sunlight, water and carbon dioxide."
+    },
+    {
+        "topic": "mitochondria",
+        "answer": "Mitochondria are known as the powerhouse of the cell because they produce ATP."
+    },
+    {
+        "topic": "chloroplast",
+        "answer": "Chloroplast contains chlorophyll and performs photosynthesis in plants."
+    }
+]
