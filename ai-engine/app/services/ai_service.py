@@ -1,8 +1,8 @@
 import json
-from pathlib import Path
 
 from rapidfuzz import process
 
+from app.config.settings import BIOLOGY_DATASET
 from app.utils.logger import logger
 from app.utils.text_utils import normalize_text
 
@@ -11,12 +11,7 @@ class AIService:
 
     def __init__(self):
 
-        dataset_path = (
-            Path(__file__).resolve().parents[3]
-            / "datasets"
-            / "processed"
-            / "biology.json"
-        )
+        dataset_path = BIOLOGY_DATASET
 
         try:
             with open(dataset_path, "r", encoding="utf-8") as file:
