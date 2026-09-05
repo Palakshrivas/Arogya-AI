@@ -1,0 +1,523 @@
+@import "tailwindcss";
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  color: #0b1020;
+  background: #f8faff;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+/* =========================
+   AUTH PAGE
+========================= */
+
+.auth-page {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background:
+    radial-gradient(circle at 20% 30%, #eef0ff 0, transparent 35%),
+    linear-gradient(135deg, #f8faff 0%, #ffffff 55%, #f3f4ff 100%);
+}
+
+/* =========================
+   LEFT SIDE
+========================= */
+
+.auth-left {
+  padding: 38px 7vw;
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  width: fit-content;
+}
+
+.logo-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  background: linear-gradient(135deg, #4f46ff, #6438f5);
+  box-shadow: 0 12px 25px rgba(79, 70, 229, 0.25);
+}
+
+.logo-name {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.6px;
+}
+
+.logo-name span {
+  color: #4f46ff;
+}
+
+.logo-tagline {
+  margin-top: 3px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #8993aa;
+}
+
+.auth-content {
+  max-width: 570px;
+  margin: auto 0;
+  padding: 70px 0;
+}
+
+.auth-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 9px 15px;
+  border: 1px solid #dce1ff;
+  border-radius: 999px;
+  background: #f0f2ff;
+  color: #4f46e5;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 27px;
+}
+
+.auth-content h1 {
+  margin: 0;
+  font-size: clamp(52px, 5vw, 76px);
+  line-height: 0.98;
+  letter-spacing: -4px;
+  font-weight: 850;
+  color: #080b18;
+}
+
+.auth-content h1 span {
+  color: #513cff;
+}
+
+.auth-content > p {
+  max-width: 540px;
+  margin-top: 28px;
+  font-size: 18px;
+  line-height: 1.7;
+  color: #596782;
+}
+
+.auth-points {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px;
+  margin-top: 30px;
+  color: #53627c;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.auth-points div::first-letter {
+  color: #00b87c;
+}
+
+/* =========================
+   RIGHT SIDE
+========================= */
+
+.auth-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 50px 7vw;
+}
+
+.auth-card {
+  width: min(470px, 100%);
+  padding: 38px;
+  border: 1px solid #e1e5ef;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow:
+    0 30px 80px rgba(45, 55, 100, 0.12),
+    0 8px 25px rgba(45, 55, 100, 0.06);
+}
+
+.card-heading {
+  margin-bottom: 30px;
+}
+
+.card-heading h2 {
+  margin: 0;
+  font-size: 30px;
+  letter-spacing: -1px;
+  color: #0a0e1d;
+}
+
+.card-heading p {
+  margin-top: 9px;
+  color: #7a859c;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.auth-card form {
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-card label {
+  margin-bottom: 8px;
+  color: #273149;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.input-box {
+  height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 0 15px;
+  margin-bottom: 20px;
+  border: 1px solid #dfe3ec;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #8b95aa;
+  transition: 0.2s ease;
+}
+
+.input-box:focus-within {
+  border-color: #635bff;
+  box-shadow: 0 0 0 4px rgba(99, 91, 255, 0.09);
+}
+
+.input-box input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #151a2b;
+  font-size: 14px;
+}
+
+.input-box input::placeholder {
+  color: #a4acbc;
+}
+
+.password-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.password-heading a {
+  margin-bottom: 8px;
+  color: #5548ef;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.eye-button {
+  display: flex;
+  align-items: center;
+  border: none;
+  background: transparent;
+  color: #8b95aa;
+  cursor: pointer;
+  padding: 3px;
+}
+
+.login-button {
+  height: 52px;
+  margin-top: 4px;
+  border: none;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #5041f5;
+  color: white;
+  font-size: 15px;
+  font-weight: 750;
+  cursor: pointer;
+  box-shadow: 0 12px 25px rgba(80, 65, 245, 0.22);
+  transition: 0.2s ease;
+}
+
+.login-button:hover {
+  transform: translateY(-2px);
+  background: #4637eb;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 25px 0;
+  color: #a2aabb;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  height: 1px;
+  flex: 1;
+  background: #e8ebf1;
+}
+
+.google-button {
+  width: 100%;
+  height: 50px;
+  border: 1px solid #dfe3ec;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: white;
+  color: #273149;
+  font-size: 14px;
+  font-weight: 650;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.google-button:hover {
+  background: #f8f9fc;
+  border-color: #cdd3df;
+}
+
+.google-button span {
+  font-size: 19px;
+  font-weight: 800;
+  color: #4285f4;
+}
+
+.signup-text {
+  margin-top: 25px;
+  text-align: center;
+  color: #7d879b;
+  font-size: 13px;
+}
+
+.signup-text a {
+  color: #5041f5;
+  font-weight: 750;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 900px) {
+  .auth-page {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-left {
+    padding: 28px 7vw;
+  }
+
+  .auth-content {
+    padding: 70px 0 30px;
+  }
+
+  .auth-content h1 {
+    font-size: clamp(48px, 10vw, 68px);
+  }
+
+  .auth-right {
+    padding: 20px 7vw 60px;
+  }
+}
+
+@media (max-width: 500px) {
+  .auth-left {
+    padding: 22px;
+  }
+
+  .auth-content {
+    padding-top: 55px;
+  }
+
+  .auth-content h1 {
+    font-size: 46px;
+    letter-spacing: -2.5px;
+  }
+
+  .auth-content > p {
+    font-size: 16px;
+  }
+
+  .auth-points {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .auth-right {
+    padding: 10px 22px 40px;
+  }
+
+  .auth-card {
+    padding: 26px 22px;
+    border-radius: 20px;
+  }
+}
+/* ================================
+   AROGYA-AI DARK / LIGHT MODE
+================================ */
+
+/* ================================
+   AROGYA-AI PROFESSIONAL DARK MODE
+   ================================ */
+
+html.dark-mode {
+  background: #0b1120 !important;
+}
+
+html.dark-mode body {
+  background: #0b1120 !important;
+  color: #f8fafc !important;
+}
+
+/* Header / Navbar */
+html.dark-mode header {
+  background: #0f172a !important;
+  border-color: #1e293b !important;
+}
+
+html.dark-mode header a,
+html.dark-mode header button {
+  color: #e2e8f0 !important;
+}
+
+html.dark-mode header a:hover,
+html.dark-mode header button:hover {
+  color: #ffffff !important;
+}
+
+/* Logo */
+html.dark-mode header .text-slate-950 {
+  color: #ffffff !important;
+}
+
+html.dark-mode header .text-indigo-600 {
+  color: #818cf8 !important;
+}
+
+/* Main Hero */
+html.dark-mode main {
+  background: #0b1120 !important;
+}
+
+/* Main heading */
+html.dark-mode .text-slate-950,
+html.dark-mode .text-slate-900 {
+  color: #f8fafc !important;
+}
+
+/* Secondary text */
+html.dark-mode .text-slate-800 {
+  color: #e2e8f0 !important;
+}
+
+html.dark-mode .text-slate-700 {
+  color: #cbd5e1 !important;
+}
+
+html.dark-mode .text-slate-600 {
+  color: #94a3b8 !important;
+}
+
+html.dark-mode .text-slate-500 {
+  color: #94a3b8 !important;
+}
+
+/* White cards */
+html.dark-mode .bg-white {
+  background: #111827 !important;
+}
+
+/* Very light backgrounds */
+html.dark-mode .bg-\[\#f8fafc\] {
+  background: #0b1120 !important;
+}
+
+/* Borders */
+html.dark-mode .border-slate-100,
+html.dark-mode .border-slate-200 {
+  border-color: #263449 !important;
+}
+
+/* AI Solver outer card */
+html.dark-mode .shadow-xl {
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35) !important;
+}
+
+/* Solver question card */
+html.dark-mode .bg-slate-50 {
+  background: #172033 !important;
+}
+
+/* Solution area */
+html.dark-mode .bg-indigo-50 {
+  background: #171d3a !important;
+}
+
+/* White result box */
+html.dark-mode .bg-white\/90 {
+  background: #111827 !important;
+}
+
+/* Moon / Sun button */
+html.dark-mode .dark-toggle {
+  background: #172033 !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+}
+
+html.dark-mode .dark-toggle:hover {
+  background: #1e293b !important;
+}
+
+/* Paragraph readability */
+html.dark-mode p {
+  color: #cbd5e1;
+}
+
+/* Keep purple branding */
+html.dark-mode .text-indigo-600,
+html.dark-mode .text-indigo-500 {
+  color: #818cf8 !important;
+}
+
+/* Green status / checks */
+html.dark-mode .text-emerald-500,
+html.dark-mode .text-emerald-600 {
+  color: #34d399 !important;
+}
