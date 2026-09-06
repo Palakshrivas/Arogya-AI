@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     app_name: str
     app_version: str
     debug: bool
+    gemini_api_key: str
 
     model_config = SettingsConfigDict(
         env_file=BASE_DIR / ".env",

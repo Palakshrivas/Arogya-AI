@@ -1,55 +1,70 @@
-import json
-
-from rapidfuzz import process
-
-from app.config.settings import BIOLOGY_DATASET
+from app.embeddings.embedding_service import EmbeddingService
+from app.embeddings.vector_store import VectorStore
 from app.utils.logger import logger
-from app.utils.text_utils import normalize_text
 
 
 class AIService:
+    """
+    Handles semantic search using Sentence Transformers and ChromaDB.
+    """
 
     def __init__(self):
-
-        dataset_path = BIOLOGY_DATASET
-
-        try:
-            with open(dataset_path, "r", encoding="utf-8") as file:
-                self.knowledge_base = json.load(file)
-
-        except FileNotFoundError:
-
-            logger.error(f"Dataset not found: {dataset_path}")
-
-            self.knowledge_base = []
-
-        except Exception as e:
-
-            logger.error(f"Error loading dataset: {e}")
-
-            self.knowledge_base = []
+        self.embedding_service = EmbeddingService()
+        self.vector_store = VectorStore()
 
     def generate_answer(self, question: str) -> str:
 
-        question = normalize_text(question)
+        try:
+            logger.info(f"Generating embedding for: {question}")
 
-        topics = [item["topic"] for item in self.knowledge_base]
+            # Generate embedding
+            embedding = self.embedding_service.generate_embedding(question)
 
-        result = process.extractOne(question, topics)
+            # Search top 3 similar documents
+            results = self.vector_store.search(
+                embedding,
+                n_results=3
+            )
 
-        if result is not None:
+            # No result found
+            if (
+                not results["documents"]
+                or not results["documents"][0]
+            ):
+                logger.warning("No matching documents found.")
 
-            matched_topic = result[0]
-            score = result[1]
+                return (
+                    "Sorry, I couldn't find any relevant information."
+                )
 
-            if score >= 70:
+            # Best match distance
+            best_distance = results["distances"][0][0]
 
-                for item in self.knowledge_base:
+            logger.info(f"Best Match Distance: {best_distance}")
 
-                    if item["topic"] == matched_topic:
-                        return item["answer"]
+            # Similarity threshold
+            if best_distance > 1.2:
 
-        return (
-            "Sorry, I don't know the answer yet. "
-            "This topic is not available in the current knowledge base."
-        )
+                logger.warning(
+                    "Match confidence too low."
+                )
+
+                return (
+                    "Sorry, I couldn't find a reliable answer "
+                    "in the knowledge base."
+                )
+
+            answer = results["documents"][0][0]
+
+            logger.info("Semantic search successful.")
+
+            return answer
+
+        except Exception as e:
+
+            logger.error(f"Semantic Search Error: {e}")
+
+            return (
+                "Sorry, something went wrong while "
+                "searching the knowledge base."
+            )
