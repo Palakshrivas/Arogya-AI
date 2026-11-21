@@ -1,4 +1,5 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import { authAPI } from "../services/api";
 
 const AuthContext = createContext(null);
 
@@ -8,87 +9,146 @@ export function AuthProvider({ children }) {
     return savedUser ? JSON.parse(savedUser) : null;
   });
 
-  const signup = (name, email, password) => {
-    const existingUser = localStorage.getItem("arogya_account");
+  const [loading, setLoading] = useState(true);
 
-    if (existingUser) {
-      return {
-        success: false,
-        message: "Account already exists. Please sign in.",
-      };
+  useEffect(() => {
+    const token = localStorage.getItem("arogya_token");
+
+    if (!token) {
+      setLoading(false);
+      return;
     }
 
-    const account = {
-      name,
-      email,
-      password,
-    };
+    authAPI
+      .getCurrentUser()
+      .then((currentUser) => {
+        setUser(currentUser);
 
-    localStorage.setItem("arogya_account", JSON.stringify(account));
-
-    setUser({
-      name,
-      email,
-    });
-
-    localStorage.setItem(
-      "arogya_user",
-      JSON.stringify({
-        name,
-        email,
+        localStorage.setItem(
+          "arogya_user",
+          JSON.stringify(currentUser)
+        );
       })
-    );
+      .catch(() => {
+        localStorage.removeItem("arogya_token");
+        localStorage.removeItem("arogya_user");
+        setUser(null);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
 
-    return {
-      success: true,
-    };
+  const signup = async (name, email, password) => {
+    try {
+      const response = await authAPI.signup(
+        name.trim(),
+        email.trim().toLowerCase(),
+        password
+      );
+
+      if (!response?.token) {
+        return {
+          success: false,
+          message: "Signup failed. Token not received.",
+        };
+      }
+
+      const loggedInUser = {
+        id: response.id,
+        name: response.name,
+        email: response.email,
+        role: response.role,
+      };
+
+      localStorage.setItem(
+        "arogya_token",
+        response.token
+      );
+
+      localStorage.setItem(
+        "arogya_user",
+        JSON.stringify(loggedInUser)
+      );
+
+      setUser(loggedInUser);
+
+      return {
+        success: true,
+        user: loggedInUser,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message || "Signup failed.",
+      };
+    }
   };
 
-  const login = (email, password) => {
-    const savedAccount = localStorage.getItem("arogya_account");
+  const login = async (email, password) => {
+    try {
+      const response = await authAPI.login(
+        email.trim().toLowerCase(),
+        password
+      );
 
-    if (!savedAccount) {
+      if (!response?.token) {
+        return {
+          success: false,
+          message: "Login failed. Token not received.",
+        };
+      }
+
+      // Save JWT immediately
+      localStorage.setItem(
+        "arogya_token",
+        response.token
+      );
+
+      /*
+       * Login API already returns:
+       * token, id, name, email, role
+       *
+       * So we do NOT need another API call here.
+       */
+
+      const loggedInUser = {
+        id: response.id,
+        name: response.name,
+        email: response.email,
+        role: response.role,
+      };
+
+      localStorage.setItem(
+        "arogya_user",
+        JSON.stringify(loggedInUser)
+      );
+
+      setUser(loggedInUser);
+
+      return {
+        success: true,
+        user: loggedInUser,
+      };
+    } catch (error) {
       return {
         success: false,
-        message: "No account found. Please create an account first.",
+        message: error.message || "Login failed.",
       };
     }
-
-    const account = JSON.parse(savedAccount);
-
-    if (account.email !== email || account.password !== password) {
-      return {
-        success: false,
-        message: "Invalid email or password.",
-      };
-    }
-
-    const loggedInUser = {
-      name: account.name,
-      email: account.email,
-    };
-
-    setUser(loggedInUser);
-
-    localStorage.setItem(
-      "arogya_user",
-      JSON.stringify(loggedInUser)
-    );
-
-    return {
-      success: true,
-    };
   };
 
   const logout = () => {
-    setUser(null);
+    localStorage.removeItem("arogya_token");
     localStorage.removeItem("arogya_user");
+    setUser(null);
   };
 
   return (
     <AuthContext.Provider
       value={{
         user,
+        loading,
         isAuthenticated: !!user,
         signup,
         login,

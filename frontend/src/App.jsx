@@ -8,66 +8,79 @@ import HistoryPage from "./pages/History";
 import Progress from "./pages/Progress";
 import Mistakes from "./pages/Mistakes";
 import Subjects from "./pages/Subjects";
-
 import ProtectedRoute from "./ProtectedRoute";
+import { AuthProvider } from "./context/AuthContext";
 
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
+      <AuthProvider>
+        <Routes>
 
-        {/* Public Pages */}
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+          {/* Public Pages */}
+          <Route
+            path="/"
+            element={<Home />}
+          />
 
-        {/* Protected Pages */}
-        <Route
-          path="/ai-assistant"
-          element={
-            <ProtectedRoute>
-              <AIAssistant />
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/login"
+            element={<Login />}
+          />
 
-        <Route
-          path="/history"
-          element={
-            <ProtectedRoute>
-              <HistoryPage />
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/signup"
+            element={<Signup />}
+          />
 
-        <Route
-          path="/progress"
-          element={
-            <ProtectedRoute>
-              <Progress />
-            </ProtectedRoute>
-          }
-        />
+          {/* Protected Pages */}
+          <Route
+            path="/ai-assistant"
+            element={
+              <ProtectedRoute>
+                <AIAssistant />
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/mistakes"
-          element={
-            <ProtectedRoute>
-              <Mistakes />
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/history"
+            element={
+              <ProtectedRoute>
+                <HistoryPage />
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/subjects"
-          element={
-            <ProtectedRoute>
-              <Subjects />
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/progress"
+            element={
+              <ProtectedRoute>
+                <Progress />
+              </ProtectedRoute>
+            }
+          />
 
-      </Routes>
+          <Route
+            path="/mistakes"
+            element={
+              <ProtectedRoute>
+                <Mistakes />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/subjects"
+            element={
+              <ProtectedRoute>
+                <Subjects />
+              </ProtectedRoute>
+            }
+          />
+
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   );
 }
