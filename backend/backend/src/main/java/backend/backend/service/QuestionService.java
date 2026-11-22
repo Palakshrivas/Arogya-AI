@@ -1,5 +1,6 @@
 package backend.backend.service;
 
+import backend.backend.dto.PageResponse;
 import backend.backend.dto.QuestionRequest;
 import backend.backend.dto.QuestionResponse;
 import backend.backend.entity.Chapter;
@@ -7,9 +8,12 @@ import backend.backend.entity.Question;
 import backend.backend.entity.Subject;
 import backend.backend.exception.ResourceConflictException;
 import backend.backend.exception.ResourceNotFoundException;
+import backend.backend.mapper.QuestionMapper;
 import backend.backend.repository.ChapterRepository;
 import backend.backend.repository.QuestionRepository;
 import backend.backend.repository.SubjectRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,15 +24,18 @@ public class QuestionService {
     private final QuestionRepository questionRepository;
     private final SubjectRepository subjectRepository;
     private final ChapterRepository chapterRepository;
+    private final QuestionMapper questionMapper;
 
     public QuestionService(
             QuestionRepository questionRepository,
             SubjectRepository subjectRepository,
-            ChapterRepository chapterRepository
+            ChapterRepository chapterRepository,
+            QuestionMapper questionMapper
     ) {
         this.questionRepository = questionRepository;
         this.subjectRepository = subjectRepository;
         this.chapterRepository = chapterRepository;
+        this.questionMapper = questionMapper;
     }
 
     public QuestionResponse createQuestion(
@@ -74,7 +81,7 @@ public class QuestionService {
 
         Question saved = questionRepository.save(question);
 
-        return toResponse(saved);
+        return questionMapper.toResponse(saved);
     }
 
     public List<QuestionResponse> getQuestions(
@@ -126,8 +133,35 @@ public class QuestionService {
         }
 
         return questions.stream()
-                .map(this::toResponse)
+                .map(questionMapper::toResponse)
                 .toList();
+    }
+
+    public PageResponse<QuestionResponse> getQuestionsByChapter(
+            Long chapterId,
+            String difficulty,
+            Pageable pageable
+    ) {
+        if (!chapterRepository.existsById(chapterId)) {
+            throw new ResourceNotFoundException("Chapter not found with id: " + chapterId);
+        }
+
+        Page<Question> questionPage;
+
+        if (difficulty != null && !difficulty.isBlank()) {
+            questionPage = questionRepository.findByChapterIdAndDifficultyIgnoreCase(
+                    chapterId,
+                    difficulty.trim(),
+                    pageable
+            );
+        } else {
+            questionPage = questionRepository.findByChapterId(
+                    chapterId,
+                    pageable
+            );
+        }
+
+        return PageResponse.of(questionPage, questionMapper::toResponse);
     }
 
     public QuestionResponse getQuestionById(Long id) {
@@ -136,7 +170,7 @@ public class QuestionService {
                         new ResourceNotFoundException("Question not found with id: " + id)
                 );
 
-        return toResponse(question);
+        return questionMapper.toResponse(question);
     }
 
     public QuestionResponse updateQuestion(Long id, QuestionRequest request) {
@@ -183,7 +217,7 @@ public class QuestionService {
         question.setChapter(chapter);
 
         Question saved = questionRepository.save(question);
-        return toResponse(saved);
+        return questionMapper.toResponse(saved);
     }
 
     public void deleteQuestion(Long id) {
@@ -193,35 +227,5 @@ public class QuestionService {
                 );
 
         questionRepository.delete(question);
-    }
-
-    private QuestionResponse toResponse(
-            Question question
-    ) {
-        return new QuestionResponse(
-                question.getId(),
-                question.getQuestionText(),
-                question.getOptionA(),
-                question.getOptionB(),
-                question.getOptionC(),
-                question.getOptionD(),
-                question.getCorrectAnswer(),
-                question.getExplanation(),
-                question.getExam(),
-                question.getDifficulty(),
-                question.getTopic(),
-                question.getSubject() != null
-                        ? question.getSubject().getId()
-                        : null,
-                question.getSubject() != null
-                        ? question.getSubject().getName()
-                        : null,
-                question.getChapter() != null
-                        ? question.getChapter().getId()
-                        : null,
-                question.getChapter() != null
-                        ? question.getChapter().getName()
-                        : null
-        );
     }
 }

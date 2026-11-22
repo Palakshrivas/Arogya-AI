@@ -1,9 +1,12 @@
 package backend.backend.controller;
 
+import backend.backend.dto.PageResponse;
 import backend.backend.dto.QuestionRequest;
 import backend.backend.dto.QuestionResponse;
 import backend.backend.service.QuestionService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,6 +47,19 @@ public class QuestionController {
                         difficulty,
                         topic
                 )
+        );
+    }
+
+    @GetMapping("/chapter/{chapterId}")
+    public ResponseEntity<PageResponse<QuestionResponse>> getQuestionsByChapter(
+            @PathVariable Long chapterId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String difficulty
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(
+                questionService.getQuestionsByChapter(chapterId, difficulty, pageable)
         );
     }
 

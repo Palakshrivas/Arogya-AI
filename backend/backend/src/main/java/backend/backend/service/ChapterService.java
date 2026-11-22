@@ -6,6 +6,7 @@ import backend.backend.entity.Chapter;
 import backend.backend.entity.Subject;
 import backend.backend.exception.ResourceConflictException;
 import backend.backend.exception.ResourceNotFoundException;
+import backend.backend.mapper.ChapterMapper;
 import backend.backend.repository.ChapterRepository;
 import backend.backend.repository.QuestionRepository;
 import backend.backend.repository.SubjectRepository;
@@ -19,15 +20,18 @@ public class ChapterService {
     private final ChapterRepository chapterRepository;
     private final SubjectRepository subjectRepository;
     private final QuestionRepository questionRepository;
+    private final ChapterMapper chapterMapper;
 
     public ChapterService(
             ChapterRepository chapterRepository,
             SubjectRepository subjectRepository,
-            QuestionRepository questionRepository
+            QuestionRepository questionRepository,
+            ChapterMapper chapterMapper
     ) {
         this.chapterRepository = chapterRepository;
         this.subjectRepository = subjectRepository;
         this.questionRepository = questionRepository;
+        this.chapterMapper = chapterMapper;
     }
 
     public List<ChapterResponse> getChaptersBySubject(
@@ -40,7 +44,7 @@ public class ChapterService {
         return chapterRepository
                 .findBySubjectIdOrderByNameAsc(subjectId)
                 .stream()
-                .map(this::toResponse)
+                .map(chapterMapper::toResponse)
                 .toList();
     }
 
@@ -49,7 +53,7 @@ public class ChapterService {
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Chapter not found with id: " + id)
                 );
-        return toResponse(chapter);
+        return chapterMapper.toResponse(chapter);
     }
 
     public ChapterResponse createChapter(ChapterRequest request) {
@@ -60,7 +64,7 @@ public class ChapterService {
 
         Chapter chapter = new Chapter(request.getName(), subject);
         Chapter saved = chapterRepository.save(chapter);
-        return toResponse(saved);
+        return chapterMapper.toResponse(saved);
     }
 
     public ChapterResponse createChapter(
@@ -74,7 +78,7 @@ public class ChapterService {
 
         Chapter chapter = new Chapter(name, subject);
         Chapter saved = chapterRepository.save(chapter);
-        return toResponse(saved);
+        return chapterMapper.toResponse(saved);
     }
 
     public ChapterResponse updateChapter(Long id, ChapterRequest request) {
@@ -91,7 +95,7 @@ public class ChapterService {
         chapter.setName(request.getName());
         chapter.setSubject(subject);
         Chapter saved = chapterRepository.save(chapter);
-        return toResponse(saved);
+        return chapterMapper.toResponse(saved);
     }
 
     public void deleteChapter(Long id) {
@@ -107,14 +111,5 @@ public class ChapterService {
         }
 
         chapterRepository.delete(chapter);
-    }
-
-    private ChapterResponse toResponse(Chapter chapter) {
-        return new ChapterResponse(
-                chapter.getId(),
-                chapter.getName(),
-                chapter.getSubject().getId(),
-                chapter.getSubject().getName()
-        );
     }
 }

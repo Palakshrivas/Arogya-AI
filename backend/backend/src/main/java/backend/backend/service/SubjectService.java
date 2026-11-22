@@ -6,6 +6,7 @@ import backend.backend.entity.Subject;
 import backend.backend.exception.DuplicateResourceException;
 import backend.backend.exception.ResourceConflictException;
 import backend.backend.exception.ResourceNotFoundException;
+import backend.backend.mapper.SubjectMapper;
 import backend.backend.repository.ChapterRepository;
 import backend.backend.repository.SubjectRepository;
 import org.springframework.stereotype.Service;
@@ -17,13 +18,16 @@ public class SubjectService {
 
     private final SubjectRepository subjectRepository;
     private final ChapterRepository chapterRepository;
+    private final SubjectMapper subjectMapper;
 
     public SubjectService(
             SubjectRepository subjectRepository,
-            ChapterRepository chapterRepository
+            ChapterRepository chapterRepository,
+            SubjectMapper subjectMapper
     ) {
         this.subjectRepository = subjectRepository;
         this.chapterRepository = chapterRepository;
+        this.subjectMapper = subjectMapper;
     }
 
     public List<SubjectResponse> getAllSubjects(String exam) {
@@ -37,7 +41,7 @@ public class SubjectService {
         }
 
         return subjects.stream()
-                .map(this::toResponse)
+                .map(subjectMapper::toResponse)
                 .toList();
     }
 
@@ -46,7 +50,7 @@ public class SubjectService {
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Subject not found with id: " + id)
                 );
-        return toResponse(subject);
+        return subjectMapper.toResponse(subject);
     }
 
     public SubjectResponse createSubject(SubjectRequest request) {
@@ -62,7 +66,7 @@ public class SubjectService {
 
         Subject subject = new Subject(request.getName(), exam);
         Subject saved = subjectRepository.save(subject);
-        return toResponse(saved);
+        return subjectMapper.toResponse(saved);
     }
 
     public SubjectResponse createSubject(
@@ -77,7 +81,7 @@ public class SubjectService {
 
         Subject subject = new Subject(name, exam != null ? exam.toUpperCase() : "");
         Subject saved = subjectRepository.save(subject);
-        return toResponse(saved);
+        return subjectMapper.toResponse(saved);
     }
 
     public SubjectResponse updateSubject(Long id, SubjectRequest request) {
@@ -100,7 +104,7 @@ public class SubjectService {
         }
 
         Subject saved = subjectRepository.save(subject);
-        return toResponse(saved);
+        return subjectMapper.toResponse(saved);
     }
 
     public void deleteSubject(Long id) {
@@ -116,13 +120,5 @@ public class SubjectService {
         }
 
         subjectRepository.delete(subject);
-    }
-
-    private SubjectResponse toResponse(Subject subject) {
-        return new SubjectResponse(
-                subject.getId(),
-                subject.getName(),
-                subject.getExam()
-        );
     }
 }
