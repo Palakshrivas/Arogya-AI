@@ -26,10 +26,11 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role;
+    private Role role = Role.STUDENT;
 
     public enum Role {
-        STUDENT
+        STUDENT,
+        ADMIN
     }
 
     public User() {
@@ -39,7 +40,14 @@ public class User {
         this.name = name;
         this.email = email;
         this.password = password;
-        this.role = role;
+        this.role = (role != null) ? role : Role.STUDENT;
+    }
+
+    @PostLoad
+    public void ensureRole() {
+        if (this.role == null) {
+            this.role = Role.STUDENT;
+        }
     }
 
     public Long getId() {
@@ -71,10 +79,10 @@ public class User {
     }
 
     public Role getRole() {
-        return role;
+        return role != null ? role : Role.STUDENT;
     }
 
     public void setRole(Role role) {
-        this.role = role;
+        this.role = (role != null) ? role : Role.STUDENT;
     }
 }

@@ -32,12 +32,16 @@ public class CustomUserDetailsService implements UserDetailsService {
                         )
                 );
 
+        String roleName = (user.getRole() != null)
+                ? user.getRole().name()
+                : User.Role.STUDENT.name();
+
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 user.getPassword(),
                 List.of(
                         new SimpleGrantedAuthority(
-                                "ROLE_" + user.getRole().name()
+                                "ROLE_" + roleName
                         )
                 )
         );

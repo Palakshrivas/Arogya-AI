@@ -68,7 +68,7 @@ public class AuthService {
                 savedUser.getId(),
                 savedUser.getName(),
                 savedUser.getEmail(),
-                savedUser.getRole().name()
+                savedUser.getRole() != null ? savedUser.getRole().name() : User.Role.STUDENT.name()
         );
     }
 
@@ -107,7 +107,7 @@ public class AuthService {
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
-                user.getRole().name()
+                user.getRole() != null ? user.getRole().name() : User.Role.STUDENT.name()
         );
     }
 }

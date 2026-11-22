@@ -40,7 +40,7 @@ public class UserController {
                         user.getId(),
                         user.getName(),
                         user.getEmail(),
-                        user.getRole().name()
+                        user.getRole() != null ? user.getRole().name() : User.Role.STUDENT.name()
                 )
         );
     }
