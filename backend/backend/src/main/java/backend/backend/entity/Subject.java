@@ -1,22 +1,26 @@
 package backend.backend.entity;
 
+import backend.backend.enums.ExamType;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "subjects")
+@Table(name = "subjects", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"name"})
+})
 public class Subject {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String exam;
+    private ExamType exam;
 
     @OneToMany(
             mappedBy = "subject",
@@ -28,7 +32,7 @@ public class Subject {
     public Subject() {
     }
 
-    public Subject(String name, String exam) {
+    public Subject(String name, ExamType exam) {
         this.name = name;
         this.exam = exam;
     }
@@ -41,7 +45,7 @@ public class Subject {
         return name;
     }
 
-    public String getExam() {
+    public ExamType getExam() {
         return exam;
     }
 
@@ -57,7 +61,7 @@ public class Subject {
         this.name = name;
     }
 
-    public void setExam(String exam) {
+    public void setExam(ExamType exam) {
         this.exam = exam;
     }
 

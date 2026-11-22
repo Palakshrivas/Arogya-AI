@@ -6,6 +6,9 @@ import backend.backend.dto.QuestionResponse;
 import backend.backend.entity.Chapter;
 import backend.backend.entity.Question;
 import backend.backend.entity.Subject;
+import backend.backend.enums.CorrectOption;
+import backend.backend.enums.Difficulty;
+import backend.backend.enums.ExamType;
 import backend.backend.exception.ResourceConflictException;
 import backend.backend.exception.ResourceNotFoundException;
 import backend.backend.mapper.QuestionMapper;
@@ -13,6 +16,7 @@ import backend.backend.repository.ChapterRepository;
 import backend.backend.repository.QuestionRepository;
 import backend.backend.repository.SubjectRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -64,16 +68,23 @@ public class QuestionService {
             subject = chapter.getSubject();
         }
 
+        CorrectOption correctOption = request.getCorrectOption() != null
+                ? request.getCorrectOption()
+                : request.getCorrectAnswer();
+
+        ExamType examType = request.getExamType() != null
+                ? request.getExamType()
+                : request.getExam();
+
         Question question = new Question();
         question.setQuestionText(request.getQuestionText());
         question.setOptionA(request.getOptionA());
         question.setOptionB(request.getOptionB());
         question.setOptionC(request.getOptionC());
         question.setOptionD(request.getOptionD());
-        question.setCorrectAnswer(request.getCorrectOption() != null ? request.getCorrectOption() : request.getCorrectAnswer());
+        question.setCorrectAnswer(correctOption);
         question.setExplanation(request.getExplanation());
-        String exam = request.getExamType() != null ? request.getExamType() : request.getExam();
-        question.setExam(exam != null ? exam.toUpperCase() : "");
+        question.setExam(examType);
         question.setDifficulty(request.getDifficulty());
         question.setTopic(request.getTopic());
         question.setSubject(subject);
@@ -85,10 +96,10 @@ public class QuestionService {
     }
 
     public List<QuestionResponse> getQuestions(
-            String exam,
+            ExamType exam,
             Long subjectId,
             Long chapterId,
-            String difficulty,
+            Difficulty difficulty,
             String topic
     ) {
         if (subjectId != null && !subjectRepository.existsById(subjectId)) {
@@ -103,13 +114,13 @@ public class QuestionService {
 
         if (chapterId != null && exam != null) {
             questions = questionRepository
-                    .findByExamIgnoreCaseAndChapterId(
+                    .findByExamAndChapterId(
                             exam,
                             chapterId
                     );
         } else if (subjectId != null && exam != null) {
             questions = questionRepository
-                    .findByExamIgnoreCaseAndSubjectId(
+                    .findByExamAndSubjectId(
                             exam,
                             subjectId
                     );
@@ -121,10 +132,10 @@ public class QuestionService {
                     .findBySubjectId(subjectId);
         } else if (exam != null) {
             questions = questionRepository
-                    .findByExamIgnoreCase(exam);
+                    .findByExam(exam);
         } else if (difficulty != null) {
             questions = questionRepository
-                    .findByDifficultyIgnoreCase(difficulty);
+                    .findByDifficulty(difficulty);
         } else if (topic != null) {
             questions = questionRepository
                     .findByTopicIgnoreCase(topic);
@@ -139,19 +150,23 @@ public class QuestionService {
 
     public PageResponse<QuestionResponse> getQuestionsByChapter(
             Long chapterId,
-            String difficulty,
+            Difficulty difficulty,
             Pageable pageable
     ) {
         if (!chapterRepository.existsById(chapterId)) {
             throw new ResourceNotFoundException("Chapter not found with id: " + chapterId);
         }
 
+        if (pageable.getPageSize() > 50) {
+            pageable = PageRequest.of(pageable.getPageNumber(), 50, pageable.getSort());
+        }
+
         Page<Question> questionPage;
 
-        if (difficulty != null && !difficulty.isBlank()) {
-            questionPage = questionRepository.findByChapterIdAndDifficultyIgnoreCase(
+        if (difficulty != null) {
+            questionPage = questionRepository.findByChapterIdAndDifficulty(
                     chapterId,
-                    difficulty.trim(),
+                    difficulty,
                     pageable
             );
         } else {
@@ -202,15 +217,22 @@ public class QuestionService {
             subject = chapter.getSubject();
         }
 
+        CorrectOption correctOption = request.getCorrectOption() != null
+                ? request.getCorrectOption()
+                : request.getCorrectAnswer();
+
+        ExamType examType = request.getExamType() != null
+                ? request.getExamType()
+                : request.getExam();
+
         question.setQuestionText(request.getQuestionText());
         question.setOptionA(request.getOptionA());
         question.setOptionB(request.getOptionB());
         question.setOptionC(request.getOptionC());
         question.setOptionD(request.getOptionD());
-        question.setCorrectAnswer(request.getCorrectOption() != null ? request.getCorrectOption() : request.getCorrectAnswer());
+        question.setCorrectAnswer(correctOption);
         question.setExplanation(request.getExplanation());
-        String exam = request.getExamType() != null ? request.getExamType() : request.getExam();
-        question.setExam(exam != null ? exam.toUpperCase() : "");
+        question.setExam(examType);
         question.setDifficulty(request.getDifficulty());
         question.setTopic(request.getTopic());
         question.setSubject(subject);

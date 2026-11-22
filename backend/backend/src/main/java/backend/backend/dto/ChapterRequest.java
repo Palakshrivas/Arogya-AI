@@ -1,5 +1,6 @@
 package backend.backend.dto;
 
+import backend.backend.enums.Difficulty;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -17,7 +18,7 @@ public class ChapterRequest {
 
     @NotNull(message = "Difficulty level must not be null")
     @JsonAlias({"difficulty", "difficultyLevel"})
-    private String difficultyLevel;
+    private Difficulty difficultyLevel;
 
     @Min(value = 0, message = "Display order must be 0 or greater")
     private Integer displayOrder;
@@ -25,7 +26,7 @@ public class ChapterRequest {
     public ChapterRequest() {
     }
 
-    public ChapterRequest(String name, Long subjectId, String difficultyLevel, Integer displayOrder) {
+    public ChapterRequest(String name, Long subjectId, Difficulty difficultyLevel, Integer displayOrder) {
         this.name = name;
         this.subjectId = subjectId;
         this.difficultyLevel = difficultyLevel;
@@ -48,19 +49,19 @@ public class ChapterRequest {
         this.subjectId = subjectId;
     }
 
-    public String getDifficultyLevel() {
+    public Difficulty getDifficultyLevel() {
         return difficultyLevel;
     }
 
-    public void setDifficultyLevel(String difficultyLevel) {
+    public void setDifficultyLevel(Difficulty difficultyLevel) {
         this.difficultyLevel = difficultyLevel;
     }
 
-    public String getDifficulty() {
+    public Difficulty getDifficulty() {
         return difficultyLevel;
     }
 
-    public void setDifficulty(String difficulty) {
+    public void setDifficulty(Difficulty difficulty) {
         this.difficultyLevel = difficulty;
     }
 

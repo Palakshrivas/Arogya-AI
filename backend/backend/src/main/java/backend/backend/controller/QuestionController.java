@@ -3,6 +3,8 @@ package backend.backend.controller;
 import backend.backend.dto.PageResponse;
 import backend.backend.dto.QuestionRequest;
 import backend.backend.dto.QuestionResponse;
+import backend.backend.enums.Difficulty;
+import backend.backend.enums.ExamType;
 import backend.backend.service.QuestionService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
@@ -33,10 +35,10 @@ public class QuestionController {
 
     @GetMapping
     public ResponseEntity<List<QuestionResponse>> getQuestions(
-            @RequestParam(required = false) String exam,
+            @RequestParam(required = false) ExamType exam,
             @RequestParam(required = false) Long subjectId,
             @RequestParam(required = false) Long chapterId,
-            @RequestParam(required = false) String difficulty,
+            @RequestParam(required = false) Difficulty difficulty,
             @RequestParam(required = false) String topic
     ) {
         return ResponseEntity.ok(
@@ -55,8 +57,18 @@ public class QuestionController {
             @PathVariable Long chapterId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) String difficulty
+            @RequestParam(required = false) Difficulty difficulty
     ) {
+        if (size > 50) {
+            size = 50;
+        } else if (size < 1) {
+            size = 10;
+        }
+
+        if (page < 0) {
+            page = 0;
+        }
+
         Pageable pageable = PageRequest.of(page, size);
         return ResponseEntity.ok(
                 questionService.getQuestionsByChapter(chapterId, difficulty, pageable)

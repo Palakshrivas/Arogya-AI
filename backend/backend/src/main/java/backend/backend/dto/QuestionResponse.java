@@ -1,5 +1,9 @@
 package backend.backend.dto;
 
+import backend.backend.enums.CorrectOption;
+import backend.backend.enums.Difficulty;
+import backend.backend.enums.ExamType;
+
 public record QuestionResponse(
         Long id,
         String questionText,
@@ -7,10 +11,10 @@ public record QuestionResponse(
         String optionB,
         String optionC,
         String optionD,
-        String correctAnswer,
+        CorrectOption correctAnswer,
         String explanation,
-        String exam,
-        String difficulty,
+        ExamType exam,
+        Difficulty difficulty,
         String topic,
         Long subjectId,
         String subjectName,

@@ -1,6 +1,8 @@
 package backend.backend.repository;
 
 import backend.backend.entity.Question;
+import backend.backend.enums.Difficulty;
+import backend.backend.enums.ExamType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,7 +11,7 @@ import java.util.List;
 
 public interface QuestionRepository extends JpaRepository<Question, Long> {
 
-    List<Question> findByExamIgnoreCase(String exam);
+    List<Question> findByExam(ExamType exam);
 
     List<Question> findBySubjectId(Long subjectId);
 
@@ -17,23 +19,23 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     Page<Question> findByChapterId(Long chapterId, Pageable pageable);
 
-    Page<Question> findByChapterIdAndDifficultyIgnoreCase(
+    Page<Question> findByChapterIdAndDifficulty(
             Long chapterId,
-            String difficulty,
+            Difficulty difficulty,
             Pageable pageable
     );
 
-    List<Question> findByExamIgnoreCaseAndSubjectId(
-            String exam,
+    List<Question> findByExamAndSubjectId(
+            ExamType exam,
             Long subjectId
     );
 
-    List<Question> findByExamIgnoreCaseAndChapterId(
-            String exam,
+    List<Question> findByExamAndChapterId(
+            ExamType exam,
             Long chapterId
     );
 
-    List<Question> findByDifficultyIgnoreCase(String difficulty);
+    List<Question> findByDifficulty(Difficulty difficulty);
 
     List<Question> findByTopicIgnoreCase(String topic);
 

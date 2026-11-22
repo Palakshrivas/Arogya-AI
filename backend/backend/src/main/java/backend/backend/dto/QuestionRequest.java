@@ -1,5 +1,8 @@
 package backend.backend.dto;
 
+import backend.backend.enums.CorrectOption;
+import backend.backend.enums.Difficulty;
+import backend.backend.enums.ExamType;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -24,16 +27,17 @@ public class QuestionRequest {
 
     @NotNull(message = "Correct option must not be null")
     @JsonAlias({"correctOption", "correctAnswer"})
-    private String correctOption;
+    private CorrectOption correctOption;
 
     private String explanation;
 
     @NotNull(message = "Exam type must not be null")
     @JsonAlias({"exam", "examType"})
-    private String examType;
+    private ExamType examType;
 
     @NotNull(message = "Difficulty must not be null")
-    private String difficulty;
+    @JsonAlias({"difficulty", "difficultyLevel"})
+    private Difficulty difficulty;
 
     private String topic;
 
@@ -86,19 +90,19 @@ public class QuestionRequest {
         this.optionD = optionD;
     }
 
-    public String getCorrectOption() {
+    public CorrectOption getCorrectOption() {
         return correctOption;
     }
 
-    public void setCorrectOption(String correctOption) {
+    public void setCorrectOption(CorrectOption correctOption) {
         this.correctOption = correctOption;
     }
 
-    public String getCorrectAnswer() {
+    public CorrectOption getCorrectAnswer() {
         return correctOption;
     }
 
-    public void setCorrectAnswer(String correctAnswer) {
+    public void setCorrectAnswer(CorrectOption correctAnswer) {
         this.correctOption = correctAnswer;
     }
 
@@ -110,27 +114,27 @@ public class QuestionRequest {
         this.explanation = explanation;
     }
 
-    public String getExamType() {
+    public ExamType getExamType() {
         return examType;
     }
 
-    public void setExamType(String examType) {
+    public void setExamType(ExamType examType) {
         this.examType = examType;
     }
 
-    public String getExam() {
+    public ExamType getExam() {
         return examType;
     }
 
-    public void setExam(String exam) {
+    public void setExam(ExamType exam) {
         this.examType = exam;
     }
 
-    public String getDifficulty() {
+    public Difficulty getDifficulty() {
         return difficulty;
     }
 
-    public void setDifficulty(String difficulty) {
+    public void setDifficulty(Difficulty difficulty) {
         this.difficulty = difficulty;
     }
 

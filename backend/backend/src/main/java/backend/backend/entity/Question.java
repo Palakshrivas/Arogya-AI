@@ -1,5 +1,8 @@
 package backend.backend.entity;
 
+import backend.backend.enums.CorrectOption;
+import backend.backend.enums.Difficulty;
+import backend.backend.enums.ExamType;
 import jakarta.persistence.*;
 
 @Entity
@@ -25,17 +28,20 @@ public class Question {
     @Column(nullable = false)
     private String optionD;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String correctAnswer;
+    private CorrectOption correctAnswer;
 
     @Column(columnDefinition = "TEXT")
     private String explanation;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String exam;
+    private ExamType exam;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String difficulty;
+    private Difficulty difficulty;
 
     @Column
     private String topic;
@@ -75,7 +81,11 @@ public class Question {
         return optionD;
     }
 
-    public String getCorrectAnswer() {
+    public CorrectOption getCorrectAnswer() {
+        return correctAnswer;
+    }
+
+    public CorrectOption getCorrectOption() {
         return correctAnswer;
     }
 
@@ -83,11 +93,15 @@ public class Question {
         return explanation;
     }
 
-    public String getExam() {
+    public ExamType getExam() {
         return exam;
     }
 
-    public String getDifficulty() {
+    public ExamType getExamType() {
+        return exam;
+    }
+
+    public Difficulty getDifficulty() {
         return difficulty;
     }
 
@@ -127,19 +141,27 @@ public class Question {
         this.optionD = optionD;
     }
 
-    public void setCorrectAnswer(String correctAnswer) {
+    public void setCorrectAnswer(CorrectOption correctAnswer) {
         this.correctAnswer = correctAnswer;
+    }
+
+    public void setCorrectOption(CorrectOption correctOption) {
+        this.correctAnswer = correctOption;
     }
 
     public void setExplanation(String explanation) {
         this.explanation = explanation;
     }
 
-    public void setExam(String exam) {
+    public void setExam(ExamType exam) {
         this.exam = exam;
     }
 
-    public void setDifficulty(String difficulty) {
+    public void setExamType(ExamType examType) {
+        this.exam = examType;
+    }
+
+    public void setDifficulty(Difficulty difficulty) {
         this.difficulty = difficulty;
     }
 

@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "chapters")
+@Table(name = "chapters", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"name", "subject_id"})
+})
 public class Chapter {
 
     @Id

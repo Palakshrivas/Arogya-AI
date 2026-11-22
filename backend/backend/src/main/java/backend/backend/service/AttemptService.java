@@ -41,8 +41,8 @@ public class AttemptService {
         Question question = questionRepository.findById(request.getQuestionId())
                 .orElseThrow(() -> new RuntimeException("Question not found"));
 
-        boolean correct = question.getCorrectAnswer()
-                .equalsIgnoreCase(request.getSelectedAnswer().trim());
+        boolean correct = question.getCorrectAnswer() != null
+                && question.getCorrectAnswer().name().equalsIgnoreCase(request.getSelectedAnswer().trim());
 
         Attempt attempt = new Attempt();
 
@@ -58,7 +58,7 @@ public class AttemptService {
                 saved.getId(),
                 question.getId(),
                 saved.getSelectedAnswer(),
-                question.getCorrectAnswer(),
+                question.getCorrectAnswer() != null ? question.getCorrectAnswer().name() : null,
                 saved.isCorrect(),
                 saved.getAttemptedAt()
         );
@@ -76,7 +76,7 @@ public class AttemptService {
                         attempt.getId(),
                         attempt.getQuestion().getId(),
                         attempt.getSelectedAnswer(),
-                        attempt.getQuestion().getCorrectAnswer(),
+                        attempt.getQuestion().getCorrectAnswer() != null ? attempt.getQuestion().getCorrectAnswer().name() : null,
                         attempt.isCorrect(),
                         attempt.getAttemptedAt()
                 ))

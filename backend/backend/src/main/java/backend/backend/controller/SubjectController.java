@@ -2,6 +2,7 @@ package backend.backend.controller;
 
 import backend.backend.dto.SubjectRequest;
 import backend.backend.dto.SubjectResponse;
+import backend.backend.enums.ExamType;
 import backend.backend.service.SubjectService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public class SubjectController {
 
     @GetMapping
     public ResponseEntity<List<SubjectResponse>> getSubjects(
-            @RequestParam(required = false) String exam
+            @RequestParam(required = false) ExamType exam
     ) {
         return ResponseEntity.ok(
                 subjectService.getAllSubjects(exam)

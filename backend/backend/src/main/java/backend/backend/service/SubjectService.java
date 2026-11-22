@@ -3,6 +3,7 @@ package backend.backend.service;
 import backend.backend.dto.SubjectRequest;
 import backend.backend.dto.SubjectResponse;
 import backend.backend.entity.Subject;
+import backend.backend.enums.ExamType;
 import backend.backend.exception.DuplicateResourceException;
 import backend.backend.exception.ResourceConflictException;
 import backend.backend.exception.ResourceNotFoundException;
@@ -30,14 +31,14 @@ public class SubjectService {
         this.subjectMapper = subjectMapper;
     }
 
-    public List<SubjectResponse> getAllSubjects(String exam) {
+    public List<SubjectResponse> getAllSubjects(ExamType exam) {
 
         List<Subject> subjects;
 
-        if (exam == null || exam.isBlank()) {
+        if (exam == null) {
             subjects = subjectRepository.findAll();
         } else {
-            subjects = subjectRepository.findByExamIgnoreCase(exam);
+            subjects = subjectRepository.findByExam(exam);
         }
 
         return subjects.stream()
@@ -60,26 +61,7 @@ public class SubjectService {
             );
         }
 
-        String exam = request.getExamType() != null
-                ? request.getExamType().toUpperCase()
-                : "";
-
-        Subject subject = new Subject(request.getName(), exam);
-        Subject saved = subjectRepository.save(subject);
-        return subjectMapper.toResponse(saved);
-    }
-
-    public SubjectResponse createSubject(
-            String name,
-            String exam
-    ) {
-        if (subjectRepository.existsByNameIgnoreCase(name)) {
-            throw new DuplicateResourceException(
-                    "Subject already exists with name: " + name
-            );
-        }
-
-        Subject subject = new Subject(name, exam != null ? exam.toUpperCase() : "");
+        Subject subject = new Subject(request.getName(), request.getExamType());
         Subject saved = subjectRepository.save(subject);
         return subjectMapper.toResponse(saved);
     }
@@ -100,7 +82,7 @@ public class SubjectService {
 
         subject.setName(request.getName());
         if (request.getExamType() != null) {
-            subject.setExam(request.getExamType().toUpperCase());
+            subject.setExam(request.getExamType());
         }
 
         Subject saved = subjectRepository.save(subject);
