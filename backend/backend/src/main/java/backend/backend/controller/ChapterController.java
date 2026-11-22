@@ -1,7 +1,9 @@
 package backend.backend.controller;
 
+import backend.backend.dto.ChapterRequest;
 import backend.backend.dto.ChapterResponse;
 import backend.backend.service.ChapterService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,28 +23,44 @@ public class ChapterController {
     public ResponseEntity<List<ChapterResponse>> getChapters(
             @PathVariable Long subjectId
     ) {
-
         return ResponseEntity.ok(
                 chapterService.getChaptersBySubject(subjectId)
         );
     }
 
-    @PostMapping
-    public ResponseEntity<?> createChapter(
-            @RequestParam String name,
-            @RequestParam Long subjectId
+    @GetMapping("/{id}")
+    public ResponseEntity<ChapterResponse> getChapter(
+            @PathVariable Long id
     ) {
+        return ResponseEntity.ok(
+                chapterService.getChapterById(id)
+        );
+    }
 
-        try {
-            return ResponseEntity.ok(
-                    chapterService.createChapter(
-                            name,
-                            subjectId
-                    )
-            );
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest()
-                    .body(e.getMessage());
-        }
+    @PostMapping
+    public ResponseEntity<ChapterResponse> createChapter(
+            @Valid @RequestBody ChapterRequest request
+    ) {
+        return ResponseEntity.ok(
+                chapterService.createChapter(request)
+        );
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ChapterResponse> updateChapter(
+            @PathVariable Long id,
+            @Valid @RequestBody ChapterRequest request
+    ) {
+        return ResponseEntity.ok(
+                chapterService.updateChapter(id, request)
+        );
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteChapter(
+            @PathVariable Long id
+    ) {
+        chapterService.deleteChapter(id);
+        return ResponseEntity.noContent().build();
     }
 }

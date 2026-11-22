@@ -26,4 +26,6 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     List<Question> findByDifficultyIgnoreCase(String difficulty);
 
     List<Question> findByTopicIgnoreCase(String topic);
+
+    boolean existsByChapterId(Long chapterId);
 }

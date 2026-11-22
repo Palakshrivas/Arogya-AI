@@ -14,4 +14,8 @@ public interface SubjectRepository extends JpaRepository<Subject, Long> {
             String name,
             String exam
     );
+
+    Optional<Subject> findByNameIgnoreCase(String name);
+
+    boolean existsByNameIgnoreCase(String name);
 }

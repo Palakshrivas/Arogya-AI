@@ -1,7 +1,12 @@
 package backend.backend.service;
 
+import backend.backend.dto.SubjectRequest;
 import backend.backend.dto.SubjectResponse;
 import backend.backend.entity.Subject;
+import backend.backend.exception.DuplicateResourceException;
+import backend.backend.exception.ResourceConflictException;
+import backend.backend.exception.ResourceNotFoundException;
+import backend.backend.repository.ChapterRepository;
 import backend.backend.repository.SubjectRepository;
 import org.springframework.stereotype.Service;
 
@@ -11,9 +16,14 @@ import java.util.List;
 public class SubjectService {
 
     private final SubjectRepository subjectRepository;
+    private final ChapterRepository chapterRepository;
 
-    public SubjectService(SubjectRepository subjectRepository) {
+    public SubjectService(
+            SubjectRepository subjectRepository,
+            ChapterRepository chapterRepository
+    ) {
         this.subjectRepository = subjectRepository;
+        this.chapterRepository = chapterRepository;
     }
 
     public List<SubjectResponse> getAllSubjects(String exam) {
@@ -27,27 +37,92 @@ public class SubjectService {
         }
 
         return subjects.stream()
-                .map(subject -> new SubjectResponse(
-                        subject.getId(),
-                        subject.getName(),
-                        subject.getExam()
-                ))
+                .map(this::toResponse)
                 .toList();
+    }
+
+    public SubjectResponse getSubjectById(Long id) {
+        Subject subject = subjectRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Subject not found with id: " + id)
+                );
+        return toResponse(subject);
+    }
+
+    public SubjectResponse createSubject(SubjectRequest request) {
+        if (subjectRepository.existsByNameIgnoreCase(request.getName())) {
+            throw new DuplicateResourceException(
+                    "Subject already exists with name: " + request.getName()
+            );
+        }
+
+        String exam = request.getExamType() != null
+                ? request.getExamType().toUpperCase()
+                : "";
+
+        Subject subject = new Subject(request.getName(), exam);
+        Subject saved = subjectRepository.save(subject);
+        return toResponse(saved);
     }
 
     public SubjectResponse createSubject(
             String name,
             String exam
     ) {
+        if (subjectRepository.existsByNameIgnoreCase(name)) {
+            throw new DuplicateResourceException(
+                    "Subject already exists with name: " + name
+            );
+        }
 
-        Subject subject = new Subject(name, exam.toUpperCase());
+        Subject subject = new Subject(name, exam != null ? exam.toUpperCase() : "");
+        Subject saved = subjectRepository.save(subject);
+        return toResponse(saved);
+    }
+
+    public SubjectResponse updateSubject(Long id, SubjectRequest request) {
+        Subject subject = subjectRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Subject not found with id: " + id)
+                );
+
+        subjectRepository.findByNameIgnoreCase(request.getName()).ifPresent(existing -> {
+            if (!existing.getId().equals(id)) {
+                throw new DuplicateResourceException(
+                        "Subject already exists with name: " + request.getName()
+                );
+            }
+        });
+
+        subject.setName(request.getName());
+        if (request.getExamType() != null) {
+            subject.setExam(request.getExamType().toUpperCase());
+        }
 
         Subject saved = subjectRepository.save(subject);
+        return toResponse(saved);
+    }
 
+    public void deleteSubject(Long id) {
+        Subject subject = subjectRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Subject not found with id: " + id)
+                );
+
+        if (chapterRepository.existsBySubjectId(id)) {
+            throw new ResourceConflictException(
+                    "Cannot delete subject with id " + id + " because it still has associated chapters"
+            );
+        }
+
+        subjectRepository.delete(subject);
+    }
+
+    private SubjectResponse toResponse(Subject subject) {
         return new SubjectResponse(
-                saved.getId(),
-                saved.getName(),
-                saved.getExam()
+                subject.getId(),
+                subject.getName(),
+                subject.getExam()
         );
     }
 }

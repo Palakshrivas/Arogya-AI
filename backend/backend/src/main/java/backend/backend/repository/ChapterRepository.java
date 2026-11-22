@@ -14,4 +14,6 @@ public interface ChapterRepository extends JpaRepository<Chapter, Long> {
             String name,
             Long subjectId
     );
+
+    boolean existsBySubjectId(Long subjectId);
 }
